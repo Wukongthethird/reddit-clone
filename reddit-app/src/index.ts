@@ -1,7 +1,8 @@
 
-import { COOKIE_NAME, __production__ } from "./constants";
 // import { Recipe } from "./entities/recipe";
 import 'reflect-metadata'
+import dotenv from 'dotenv'
+import { COOKIE_NAME, __production__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -11,17 +12,13 @@ import { PostResolver } from "./resolvers/posts";
 import cors from "cors";
 import Redis from "ioredis"
 import { createConnection } from "typeorm";
-
-
-
-
 // let redis = require("redis");
-
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { Users } from "./entities/Users";
 import { Post } from "./entities/Post";
 
+dotenv.config()
 
 const MAIN = async () => {
   const conn = await createConnection({
@@ -39,7 +36,6 @@ const MAIN = async () => {
   let RedisStore = connectRedis(session);
   let redis = new Redis()
 
-
   app.use(
     cors({
       origin: "http://localhost:3000",
@@ -47,7 +43,6 @@ const MAIN = async () => {
       credentials: true,
     })
   );
-
   app.use(
     session({
       name: COOKIE_NAME,
