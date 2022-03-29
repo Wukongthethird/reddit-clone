@@ -27,8 +27,8 @@ const MAIN = async () => {
   const conn = await createConnection({
     type:'postgres',
     database:'tasteofbukkake2',
-    username: "simonzhang",
-    password: "admin",
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
     logging:true,
     synchronize:true,
     entities:[Post , Users]
@@ -42,8 +42,8 @@ const MAIN = async () => {
 
   app.use(
     cors({
-      // origin: "http://localhost:3000",
-      origin : "*",
+      origin: "http://localhost:3000",
+      // origin : "*",
       credentials: true,
     })
   );
