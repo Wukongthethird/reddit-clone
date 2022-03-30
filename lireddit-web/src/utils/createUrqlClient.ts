@@ -1,8 +1,42 @@
-import {  dedupExchange, fetchExchange } from "urql";
+import { CombinedError, dedupExchange, Exchange, fetchExchange } from "urql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 import { cacheExchange } from "@urql/exchange-graphcache";
-import { LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation } from "../generated/graphql";
+import {
+  LoginMutation,
+  LogoutMutation,
+  MeDocument,
+  MeQuery,
+  RegisterMutation,
+} from "../generated/graphql";
+import { pipe, tap } from "wonka";
+import Router from "next/router";
 
+const errorExchange: Exchange =
+  ({ forward }) =>
+  (ops$) => {
+    return pipe(
+      forward(ops$),
+      tap(({ error }) => {
+        if (error?.message.includes("you must be logged in to create a post")) {
+          Router.replace("/login");
+        }
+      })
+    );
+  };
+// const errorExchange: Exchange =
+//   ({ forward }) =>
+//   (ops$) => {
+//     return pipe(
+//       forward(ops$),
+//       tap(({ error }) => {
+
+        // if (error?.message.includes("not authenticated")) {
+        //   console.log(error)
+        //   // Router.replace("/login");
+        // }
+//       })
+//     );
+//   };
 
 export const createUrqlClient = (ssrExhange: any) => ({
   url: "http://localhost:4000/graphql",
@@ -58,7 +92,8 @@ export const createUrqlClient = (ssrExhange: any) => ({
         },
       },
     }),
+    errorExchange,
     ssrExhange,
     fetchExchange,
   ],
-} ) ;
+});
