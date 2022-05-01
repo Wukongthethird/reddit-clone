@@ -9,11 +9,11 @@ import { toErrorMaps } from "../../utils/toErrorMap";
 import { useState } from "react";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
-import NextLink from 'next/link'
+import NextLink from "next/link";
 
-const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
+const ChangePassword: NextPage<{ token: string }> = () => {
   const [, changePassword] = useChangePasswordMutation();
-  const [tokenError, setTokenError] = useState('')
+  const [tokenError, setTokenError] = useState("");
   const router = useRouter();
   return (
     <Wrapper variant="small">
@@ -22,11 +22,12 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
         onSubmit={async (values, { setErrors }) => {
           const response = await changePassword({
             newPassword: values.newPassword,
-            token,
+            token:
+              typeof router.query.token === "string" ? router.query.token : "",
           });
           if (response.data?.changePassword?.errors) {
-            const errorMap = toErrorMaps(response.data.changePassword.errors)
-            if( 'token' in errorMap){
+            const errorMap = toErrorMaps(response.data.changePassword.errors);
+            if ("token" in errorMap) {
               setTokenError(errorMap.token);
             }
             setErrors(errorMap);
@@ -45,18 +46,19 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
               label="New password"
               type="password"
             />
-           {tokenError?
-           <Flex>
-           <Box>
-            <Box mr={2} color = 'red'> {tokenError}</Box>
-            <NextLink href='/forgot-password'>
-              <Link>
-                Click here for new Token
-              </Link>
-            </NextLink>
-            </Box>
-            </Flex>
-            :null }
+            {tokenError ? (
+              <Flex>
+                <Box>
+                  <Box mr={2} color="red">
+                    {" "}
+                    {tokenError}
+                  </Box>
+                  <NextLink href="/forgot-password">
+                    <Link>Click here for new Token</Link>
+                  </NextLink>
+                </Box>
+              </Flex>
+            ) : null}
             <Button mt={4} type="submit">
               change password
             </Button>
@@ -67,10 +69,10 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   );
 };
 
-ChangePassword.getInitialProps = ({ query }) => {
-  return {
-    token: query.token as string,
-  };
-};
+// ChangePassword.getInitialProps = ({ query }) => {
+//   return {
+//     token: query.token as string,
+//   };
+// };
 
-export default withUrqlClient(createUrqlClient, {ssr:false})(ChangePassword);
+export default withUrqlClient(createUrqlClient, { ssr: false })(ChangePassword);

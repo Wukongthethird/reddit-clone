@@ -125,10 +125,11 @@ let UserResolver = class UserResolver {
                 .values({
                 username: options.username,
                 password: hashedPassword,
+                email: options.email
             })
                 .returning("*")
                 .execute();
-            user = result.raw;
+            user = result.raw[0];
         }
         catch (err) {
             if (err.code === "23505" || err.detail.includes("already exisits")) {
@@ -146,6 +147,7 @@ let UserResolver = class UserResolver {
         return { user };
     }
     async login(usernameOrEmail, password, { req }) {
+        console.log("INPUT", usernameOrEmail);
         const user = await Users_1.Users.findOne(usernameOrEmail.includes("@")
             ? { where: { email: usernameOrEmail } }
             : { where: { username: usernameOrEmail } });

@@ -12,6 +12,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { Post } from "../entities/Post";
+import { getConnection } from "typeorm";
 
 @InputType()
 class PostInput {
@@ -25,8 +26,25 @@ class PostInput {
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  async posts(): Promise<Post[]> {
-    return Post.find();
+  async posts(
+    @Arg("limit", ()=> Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<Post[]> {
+    const realLimit = Math.min(50, limit);
+    const qb = getConnection()
+      .getRepository(Post)
+      .createQueryBuilder("p")
+      .orderBy('"createdAt"', "DESC")
+      .take(realLimit);
+
+    if (cursor) {
+      qb.where('"createdAt" < :cursor', { 
+        cursor: new Date(parseInt(cursor))
+       });
+    }
+    return qb.getMany();
+
+    // return Post.find();
   }
 
   @Query(() => Post, { nullable: true })
@@ -37,16 +55,17 @@ export class PostResolver {
   @Mutation(() => Post)
   @UseMiddleware(isAuth)
   async createPost(
-    @Arg("options") options: PostInput,
+    @Arg("input") input: PostInput,
     @Ctx() { req }: MyContext
   ): Promise<Post> {
     return Post.create({
-      ...options,
+      ...input,
       creatorId: +(req.session.userId as any),
     }).save();
   }
 
   @Mutation(() => Post)
+  @UseMiddleware(isAuth)
   async updatePost(
     @Arg("id") id: number,
     @Arg("title", () => String, { nullable: true }) title: string

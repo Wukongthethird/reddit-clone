@@ -3,6 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
+const dotenv_1 = __importDefault(require("dotenv"));
 const constants_1 = require("./constants");
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
@@ -17,16 +19,20 @@ const express_session_1 = __importDefault(require("express-session"));
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const Users_1 = require("./entities/Users");
 const Post_1 = require("./entities/Post");
+const path_1 = __importDefault(require("path"));
+dotenv_1.default.config();
 const MAIN = async () => {
     const conn = await (0, typeorm_1.createConnection)({
         type: 'postgres',
-        database: 'tasteofbukkake2 ',
-        username: "simonzhang",
-        password: "admin",
+        database: 'tasteofbukkake2',
+        username: process.env.DATABASE_USERNAME,
+        password: process.env.DATABASE_PASSWORD,
         logging: true,
-        synchronize: true,
-        entities: [Post_1.Post, Users_1.Users]
+        synchronize: false,
+        entities: [Post_1.Post, Users_1.Users],
+        migrations: [path_1.default.join(__dirname, "./migration/*")],
     });
+    await conn.runMigrations();
     const app = (0, express_1.default)();
     let RedisStore = (0, connect_redis_1.default)(express_session_1.default);
     let redis = new ioredis_1.default();

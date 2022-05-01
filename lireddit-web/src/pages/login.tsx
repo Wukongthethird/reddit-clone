@@ -8,14 +8,14 @@ import { toErrorMaps } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import NextLink from 'next/link'
+import NextLink from "next/link";
 
 export const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
 
   return (
-    <Wrapper variant="small"> 
+    <Wrapper variant="small">
       <Formik
         initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -23,9 +23,11 @@ export const Login: React.FC<{}> = ({}) => {
           if (response.data?.login?.errors) {
             setErrors(toErrorMaps(response.data.login.errors));
           } else if (response.data?.login?.user) {
-            //worked
-            console.log(response.data?.login?.user);
-            router.push("/");
+            if (typeof router.query.next === "string") {
+              router.push(router.query.next);
+            } else {
+              router.push("/");
+            }
           }
         }}
       >
@@ -45,11 +47,11 @@ export const Login: React.FC<{}> = ({}) => {
               />
             </Box>
             <Flex mt={2}>
-            <NextLink href='/forgot-password'>
-              <Link ml="auto"> Forgot Password bitch? </Link>
-            </NextLink>
+              <NextLink href="/forgot-password">
+                <Link ml="auto"> Forgot Password bitch? </Link>
+              </NextLink>
             </Flex>
-            <Button mt={4} type="submit" color = 'teal'>
+            <Button mt={4} type="submit" color="teal">
               login
             </Button>
           </Form>

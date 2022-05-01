@@ -17,20 +17,26 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { Users } from "./entities/Users";
 import { Post } from "./entities/Post";
+import path from "path"
+
 
 dotenv.config()
 
+//rerun save
 const MAIN = async () => {
+
   const conn = await createConnection({
     type:'postgres',
     database:'tasteofbukkake2',
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
     logging:true,
-    synchronize:true,
-    entities:[Post , Users]
-
+    synchronize:false,
+    entities:[Post , Users],
+    migrations: [path.join(__dirname , "./migration/*")],
   });
+
+  await conn.runMigrations();
 
   const app = express();
   let RedisStore = connectRedis(session);
@@ -38,8 +44,8 @@ const MAIN = async () => {
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
-      // origin : "*",
+      // origin: "http://localhost:3000",
+      origin : "*",
       credentials: true,
     })
   );
