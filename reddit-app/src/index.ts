@@ -22,7 +22,7 @@ import path from "path"
 
 dotenv.config()
 
-//rerun save
+
 const MAIN = async () => {
 
   const conn = await createConnection({
@@ -37,6 +37,7 @@ const MAIN = async () => {
   });
 
   await conn.runMigrations();
+  // await Post.delete({})
 
   const app = express();
   let RedisStore = connectRedis(session);
