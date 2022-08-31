@@ -31,6 +31,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   register: UserResponse;
   updatePost: Post;
+  vote: Scalars['Boolean'];
 };
 
 
@@ -71,6 +72,12 @@ export type MutationUpdatePostArgs = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+
+export type MutationVoteArgs = {
+  postId: Scalars['Int'];
+  value: Scalars['Int'];
+};
+
 export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   hasMore: Scalars['Boolean'];
@@ -80,6 +87,7 @@ export type PaginatedPosts = {
 export type Post = {
   __typename?: 'Post';
   createdAt: Scalars['String'];
+  creator: Users;
   creatorId: Scalars['Float'];
   id: Scalars['Float'];
   points: Scalars['Float'];
@@ -87,6 +95,7 @@ export type Post = {
   textSnippet: Scalars['String'];
   title: Scalars['String'];
   updatedAt: Scalars['String'];
+  upvote: Upvote;
 };
 
 export type PostInput = {
@@ -113,6 +122,15 @@ export type QueryPostsArgs = {
   limit: Scalars['Int'];
 };
 
+export type Upvote = {
+  __typename?: 'Upvote';
+  post: Post;
+  postId: Scalars['Float'];
+  user: Users;
+  userId: Scalars['Float'];
+  value: Scalars['Float'];
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -130,7 +148,9 @@ export type Users = {
   createAt: Scalars['String'];
   email: Scalars['String'];
   id: Scalars['Float'];
+  posts: Post;
   updatedAt: Scalars['String'];
+  upvote: Upvote;
   username: Scalars['String'];
 };
 
@@ -193,7 +213,7 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, textSnippet: string }> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string, points: number, textSnippet: string, creator: { __typename?: 'Users', id: number, username: string } }> } };
 
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
@@ -310,7 +330,12 @@ export const PostsDocument = gql`
       createdAt
       updatedAt
       title
+      points
       textSnippet
+      creator {
+        id
+        username
+      }
     }
   }
 }

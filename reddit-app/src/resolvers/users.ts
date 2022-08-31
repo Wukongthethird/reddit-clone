@@ -6,6 +6,8 @@ import {
   Ctx,
   ObjectType,
   Query,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { MyContext } from "../types/MyContext";
 import { Users } from "../entities/Users";
@@ -31,11 +33,21 @@ class UserResponse {
   errors?: FieldError[];
 
   @Field(() => Users, { nullable: true })
-  user?: Users;
+  user?: Users; 
 }
 
-@Resolver()
+@Resolver(Users)
 export class UserResolver {
+  @FieldResolver(()=> String)
+  email( @Root() user:Users, @Ctx() {req} :MyContext){
+    // it's okay to show own email
+    if( req.session.userId === user.id){
+      return user.email
+    }
+    // current user wants to see someone elses email
+    return ""
+  }
+
   @Mutation(() => UserResponse)
   async changePassword(
     @Arg("token") token: string,

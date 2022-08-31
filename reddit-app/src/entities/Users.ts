@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Post } from "./Post";
+import { Upvote } from "./Upvote";
 
 @ObjectType()
 @Entity()
@@ -18,7 +19,7 @@ export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Field()
+  @Field(() => String)
   @Column({ unique: true })
   username!: string;
 
@@ -28,9 +29,14 @@ export class Users extends BaseEntity {
 
   @Column()
   password!: string;
-
+  
+  // @Field(() => Post)
   @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
+
+  // @Field(() => Upvote)
+  @OneToMany(() => Upvote, (upvote) => upvote.user)
+  upvote: Upvote[];
 
   @Field(() => String)
   @CreateDateColumn()

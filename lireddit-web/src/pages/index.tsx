@@ -10,16 +10,18 @@ import {
   Flex,
   Heading,
   Link,
+  others,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
 const Index = () => {
-  const [variables, setVariables] = useState({limit:10, cursor:null as null | string});
-  const [{ data, fetching }] = usePostsQuery({
+  const [variables, setVariables] = useState({limit:15, cursor:null as null | string});
+  const [{ data, fetching, ...other }] = usePostsQuery({
     variables,
   });
+  console.log(fetching, other)
   if (!fetching && !data) {
     return <div> something failed</div>;
   }
@@ -39,7 +41,8 @@ const Index = () => {
             <div key={p.id}>
               <Box key={p.id} p={5} shadow="md" borderwidth="1px">
                 <Heading fontSize="xl"> {p.title}</Heading>
-                <Text mt={4}> {p.textSnippet}</Text>
+                <Text > posted by {p.creator.username} </Text>
+                <Text mt={4}> {p.textSnippet}</Text>{p.points}
               </Box>
             </div>
           ))}

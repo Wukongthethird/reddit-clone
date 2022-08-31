@@ -18,6 +18,7 @@ import connectRedis from "connect-redis";
 import { Users } from "./entities/Users";
 import { Post } from "./entities/Post";
 import path from "path"
+import { Upvote } from './entities/Upvote';
 
 
 dotenv.config()
@@ -31,8 +32,8 @@ const MAIN = async () => {
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
     logging:true,
-    synchronize:false,
-    entities:[Post , Users],
+    synchronize:true,
+    entities:[Post , Users, Upvote],
     migrations: [path.join(__dirname , "./migration/*")],
   });
 
@@ -45,8 +46,8 @@ const MAIN = async () => {
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
-      // origin : "*",
+      // origin: "http://localhost:3000",
+      origin : "*",
       credentials: true,
     })
   );
