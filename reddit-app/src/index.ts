@@ -6,7 +6,7 @@ import { COOKIE_NAME, __production__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { Hello } from "./resolvers/hello";
+import {Hello} from "./resolvers/hello";
 import { UserResolver } from "./resolvers/users";
 import { PostResolver } from "./resolvers/posts";
 import cors from "cors";
@@ -46,8 +46,8 @@ const MAIN = async () => {
 
   app.use(
     cors({
-      // origin: "http://localhost:3000",
-      origin : "*",
+      origin: "http://localhost:3000",
+      // origin : "*",
       credentials: true,
     })
   );
@@ -72,7 +72,7 @@ const MAIN = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [PostResolver, Hello, UserResolver],
+      resolvers: [PostResolver,Hello, UserResolver],
       validate: false,
     }),
     context: async ({ req, res }) => ({
@@ -89,7 +89,7 @@ const MAIN = async () => {
   });
 
   app.listen(4000, () => {
-    console.log("app is on 4000");
+    console.log("app is on 4000 here");
   });
 };
 
