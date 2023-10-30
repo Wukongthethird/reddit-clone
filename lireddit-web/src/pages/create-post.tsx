@@ -3,10 +3,10 @@ import { Formik, Form } from "formik";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import router from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrappers";
-import { useCreatePostMutation, useMeQuery } from "../generated/graphql";
+import { useCreatePostMutation, useMeQuery, usePostQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { toErrorMaps } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
@@ -15,8 +15,8 @@ import { useIsAuth } from "../utils/useIsAuth";
 
 const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
-  const [, createPost] = useCreatePostMutation();
   useIsAuth()
+  const [, createPost] = useCreatePostMutation()
   return (
     <Layout variant="small">
       <Formik
@@ -45,7 +45,7 @@ const CreatePost: React.FC<{}> = ({}) => {
               />
             </Box>
             <Button mt={4} type="submit" color="teal">
-              create post
+              update post
             </Button>
           </Form>
         )}

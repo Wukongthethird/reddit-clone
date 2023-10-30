@@ -25,4 +25,10 @@ export class Upvote extends BaseEntity {
   @Field(() => Post)
   @ManyToOne(() => Post, (post) => post.upvote)
   post: Post;
+
+  // @ManyToOne( ()=> Post, (post)=>post.upvote,{
+  //   onDelete:"CASCADE",
+  //   cascade:true
+  // })
+  // post:Post;
 }

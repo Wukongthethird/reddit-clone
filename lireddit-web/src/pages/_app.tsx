@@ -1,6 +1,7 @@
 import {
-  ColorModeProvider, ThemeProvider
+  ColorModeProvider, ThemeProvider, ChakraProvider
 } from "@chakra-ui/react";
+import React from "react";
 // import { createClient, Provider } from "urql";
 import theme from "../theme";
 
@@ -13,7 +14,7 @@ import theme from "../theme";
 
 function MyApp({ Component, pageProps }: any) {
   return (
-
+      
       <ThemeProvider theme={theme}>
         <ColorModeProvider
           options={{
@@ -23,6 +24,7 @@ function MyApp({ Component, pageProps }: any) {
           <Component {...pageProps} />
         </ColorModeProvider>
       </ThemeProvider>
+
   );
 }
 

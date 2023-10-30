@@ -1,15 +1,19 @@
-import { Box, Link, Flex, Button } from "@chakra-ui/react";
-import react from "react";
+import { Box, Link, Heading, Flex, Button, ChakraProvider } from "@chakra-ui/react";
+import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
+import {useRouter} from  'next/router'
+
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const [{fetching: logoutFetching}, logout] = useLogoutMutation();
+  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+  const router = useRouter();
   const [{ data, fetching }] = useMeQuery({
-    pause:isServer()
+    //  can remove this after cookie  on creteurqlclient
+    pause: isServer(),
   });
   let body = null;
   //lodaing data
@@ -35,13 +39,18 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   } else {
     body = (
       <Flex>
+             <NextLink href="/create-post">
+          <Button>
+          <Link mr={2}>createpost</Link>
+          </Button>
+        </NextLink>
         <Box>
           <Box mr={2}>{data.me.username}</Box>
           <Button
             variant="link"
-            onClick={() => {
-              logout();
-              
+            onClick={async () => {
+              await logout();
+              router.reload()
             }}
             isLoading={logoutFetching}
           >
@@ -53,8 +62,17 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex zIndex={1} position={"sticky"} top={0}  bg="tan" p={4}>
-      <Box ml={"auto"}>{body}</Box>
-    </Flex>
+    <ChakraProvider>
+      <Flex zIndex={1} position={"sticky"} top={0} bg="tan" p={4} align="center">
+        <Flex flex={1} m='auto' maxW={800} align="center">
+        <NextLink href="/">
+          <Link>
+            <Heading>Snoo</Heading>
+          </Link>
+        </NextLink>
+        <Box ml={"auto"}>{body}</Box>
+        </Flex>
+      </Flex>
+    </ChakraProvider>
   );
 };

@@ -19,6 +19,8 @@ import { Users } from "./entities/Users";
 import { Post } from "./entities/Post";
 import path from "path"
 import { Upvote } from './entities/Upvote';
+import { createUserLoader } from './utils/createUserLoader';
+import { createUpvoteLoader } from './utils/createUpvoteLoader';
 
 
 dotenv.config()
@@ -78,7 +80,9 @@ const MAIN = async () => {
     context: async ({ req, res }) => ({
       req,
       res,
-      redis
+      redis,
+      userLoader: createUserLoader(),
+      upvoteLoader: createUpvoteLoader(),
     }),
   });
 
